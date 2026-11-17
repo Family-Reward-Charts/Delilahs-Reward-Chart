@@ -367,6 +367,25 @@ main {
     <div id="rewardList"></div>
     <p class="note">Rewards are pretend tokens for now. A grown-up can provide the actual reward.</p>
   </section>
+  <section class="rewards">
+  <h2>🏆 My Monthly Rewards</h2>
+
+  <p>Monthly tasks completed:
+    <strong id="monthly-tasks-completed">0</strong>
+    /
+    <strong id="monthly-target">0</strong>
+  </p>
+
+  <div class="progress">
+    <div class="bar" id="monthly-progress-fill"></div>
+  </div>
+
+  <p id="monthly-progress-message"></p>
+
+  <h3>💰 Monthly Savings: <span id="monthly-savings">0</span> points</h3>
+
+  <div id="monthly-reward-list"></div>
+</section>
 <section class="rewards">
     <h2>🐾 My Animal Collection</h2>
     <p>Discover your companions and see how far each one has grown!</p>
@@ -408,6 +427,10 @@ const rewardData = [
   { name: "💷 £5 pocket money", cost: 300, weekendOnly: true },
   { name: "🍿 Family movie night", cost: 400, weekendOnly: true }
 ];
+const monthlyRewardData = [
+  { name: "📚 New Book", cost: 175 },
+  { name: "🎬 Family Cinema Trip", cost: 220 }
+];
 let currentRoutine = "morning";
 function freshState() {
   return {
@@ -441,8 +464,47 @@ animalCollection: {
   wolf: 0,
   unicorn: 0
 },
-   animalChoice: "fox"
+  animalChoice: "fox",
+
+monthlySavings: 0,
+monthlySavingsMonth: getTodayMonthKey(),
+monthlyPrizeClaimed: false,
+monthlyTasksCompleted: 0
   };
+}
+function getMonthlyTarget() {
+  const today = new Date();
+  const year = today.getFullYear();
+  const month = today.getMonth();
+
+  // Find the fourth Saturday of the month
+  let saturdayCount = 0;
+  let fourthSaturday = 0;
+
+  for (let day = 1; day <= 28; day++) {
+    const date = new Date(year, month, day);
+
+    if (date.getDay() === 6) {
+      saturdayCount++;
+
+      if (saturdayCount === 4) {
+        fourthSaturday = day;
+        break;
+      }
+    }
+  }
+
+  const totalTasks = fourthSaturday * (morningTasks.length + eveningTasks.length);
+
+  return {
+    fourthSaturday: fourthSaturday,
+    totalTasks: totalTasks,
+    requiredTasks: Math.ceil(totalTasks * 0.8)
+  };
+}
+function hasQualifiedForMonthlyPrize() {
+  const target = getMonthlyTarget();
+  return state.monthlyTasksCompleted >= target.requiredTasks;
 }
 let state;
 try {
@@ -475,7 +537,26 @@ if (!state.weeklyCelebrated) {
 if (state.photoTimeConfirmed == null) {
   state.photoTimeConfirmed = false;
 }
+if (state.monthlySavings == null) {
+  state.monthlySavings = 0;
+}
+if (!state.monthlySavingsMonth) {
+  state.monthlySavingsMonth = getTodayMonthKey();
+}
+if (state.monthlyPrizeClaimed == null) {
+  state.monthlyPrizeClaimed = false;
+}
+if (state.monthlyTasksCompleted == null) {
+  state.monthlyTasksCompleted = 0;
+}
+const currentMonth = getTodayMonthKey();
 
+if (state.monthlySavingsMonth !== currentMonth) {
+  state.monthlySavingsMonth = currentMonth;
+  state.monthlyPrizeClaimed = false;
+  state.monthlyTasksCompleted = 0;
+  save();
+}
 if (!state.weeklyStart) {
   state.weeklyStart = getWeekStart();
 }
@@ -804,6 +885,52 @@ document.getElementById("rewardList").innerHTML = rewardData.map((r, i) => {
     </button>
   `;
 }).join("");
+const monthlyTarget = getMonthlyTarget();
+const monthlyCompleted = state.monthlyTasksCompleted;
+const monthlyPercentage = Math.min(
+  100,
+  (monthlyCompleted / monthlyTarget.requiredTasks) * 100
+);
+
+document.getElementById("monthly-tasks-completed").textContent =
+  monthlyCompleted;
+
+document.getElementById("monthly-target").textContent =
+  monthlyTarget.requiredTasks;
+
+document.getElementById("monthly-progress-fill").style.width =
+  monthlyPercentage + "%";
+
+document.getElementById("monthly-savings").textContent =
+  state.monthlySavings;
+  document.getElementById("monthly-reward-list").innerHTML =
+  monthlyRewardData.map((reward, i) => {
+    const alreadyClaimed = state.monthlyPrizeClaimed;
+    const canAfford = state.monthlySavings >= reward.cost;
+    const qualified = hasQualifiedForMonthlyPrize();
+
+    return `
+      <button class="reward"
+        ${!qualified || !canAfford || alreadyClaimed ? "disabled" : ""}
+        onclick="redeemMonthlyReward(${i})">
+        ${reward.name} — ${reward.cost} monthly points
+        ${alreadyClaimed ? " (Already claimed)" : ""}
+      </button>
+    `;
+  }).join("");
+  const monthlyMessage = document.getElementById("monthly-progress-message");
+
+if (hasQualifiedForMonthlyPrize()) {
+  monthlyMessage.textContent =
+    "🏆 Amazing! You've qualified for your monthly prize!";
+} else {
+  const tasksRemaining =
+    monthlyTarget.requiredTasks - monthlyCompleted;
+
+  monthlyMessage.textContent =
+    "Keep going! You need " + tasksRemaining +
+    " more completed tasks to qualify for your monthly prize.";
+}
    document.getElementById("animalCollection").innerHTML =
     Object.keys(animalOptions).map(name => {
       const bestLevel = state.animalCollection[name] || 0;
@@ -834,7 +961,32 @@ document.getElementById("rewardList").innerHTML = rewardData.map((r, i) => {
       `;
     }).join(""); 
 }
+function redeemMonthlyReward(index) {
+  const reward = monthlyRewardData[index];
 
+  if (!hasQualifiedForMonthlyPrize()) {
+    alert("You need to qualify for your monthly prize first!");
+    return;
+  }
+
+  if (state.monthlyPrizeClaimed) {
+    alert("You've already claimed your monthly prize this month!");
+    return;
+  }
+
+  if (state.monthlySavings < reward.cost) {
+    alert("You need more monthly savings for this prize!");
+    return;
+  }
+
+  state.monthlySavings -= reward.cost;
+  state.monthlyPrizeClaimed = true;
+
+  save();
+  render();
+
+  alert("🎉 You've claimed: " + reward.name + "!");
+}
 function formatTime(seconds) {
   const m = Math.floor(seconds / 60);
   const s = seconds % 60;
@@ -890,6 +1042,13 @@ return today.getFullYear() + "-" +
   padNumber(today.getMonth() + 1) + "-" +
   padNumber(today.getDate());
 }
+function getTodayMonthKey() {
+  const today = new Date();
+  const year = today.getFullYear();
+  const month = padNumber(today.getMonth() + 1);
+
+  return year + "-" + month;
+}
 function completeTask(i) {
   const completedTasks =
     currentRoutine === "morning"
@@ -916,6 +1075,8 @@ delete previousState.undoState;
 state.undoState = previousState;
 
   completedTasks.push(i);
+  state.monthlySavings++;
+  state.monthlyTasksCompleted++;
   state.weeklyTasks = (state.weeklyTasks || 0) + 1;
   if (state.weeklyTasks >= 25 && !state.weeklyCelebrated.busyBee) {
   state.weeklyCelebrated.busyBee = true;
