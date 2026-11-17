@@ -1,0 +1,1071 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Delilah's Reward Chart</title>
+<style>
+  * { box-sizing: border-box; }
+
+  :root {
+    --ink: #252548;
+    --muted: #737393;
+    --purple: #7154e8;
+    --purple-dark: #5037b5;
+    --gold: #ffca55;
+    --card: #ffffff;
+    --page: #f3f1ff;
+  }
+
+  body {
+    margin: 0;
+    font-family: "Trebuchet MS", Arial, sans-serif;
+    color: var(--ink);
+    background:
+      radial-gradient(ellipse at top left, #e3dcff 0, transparent 42%),
+      var(--page);
+  }
+
+  header {
+    padding: 30px 20px 34px;
+    text-align: center;
+    color: white;
+    background: linear-gradient(130deg, #4934a6, #8263ef);
+    border-bottom: 5px solid var(--gold);
+  }
+
+  header h1 {
+    margin: 0 0 8px;
+    font-size: 42px;
+    letter-spacing: -1px;
+  }
+
+  header p {
+    margin: 0;
+    color: #eeeaff;
+    font-size: 17px;
+  }
+
+main {
+  width: 100%;
+  max-width: 940px;
+  padding: 0 16px;
+  margin: 26px auto 50px;
+}
+
+  .pet {
+    display: flex;
+    align-items: center;
+    padding: 26px;
+    margin-bottom: 20px;
+    border: 2px solid #e3dafa;
+    border-radius: 26px;
+    background: linear-gradient(120deg, #fff8df, #ffffff);
+    box-shadow: 0 8px 22px #46339b12;
+  }
+
+  .animal {
+   display: flex;
+   align-items: center;
+   justify-content: center;
+    flex-shrink: 0;
+    width: 124px;
+    height: 124px;
+    margin-right: 24px;
+    font-size: 76px;
+    background: #ffedb5;
+    border: 3px solid white;
+    border-radius: 35px;
+    box-shadow: 0 4px 0 #f0d98e;
+  }
+
+  .pet h2 {
+    margin: 0 0 8px;
+    font-size: 27px;
+  }
+
+  .progress {
+    height: 16px;
+    margin: 12px 0 8px;
+    overflow: hidden;
+    border-radius: 20px;
+    background: #e6e0fb;
+  }
+
+  .bar {
+    width: 0%;
+    height: 100%;
+    border-radius: inherit;
+    background: linear-gradient(90deg, #36c99a, #83df9d);
+    transition: width .35s ease;
+  }
+
+  #level {
+    font-weight: bold;
+    color: var(--purple-dark);
+  }
+
+  #xpText, .note {
+    color: var(--muted);
+    font-size: 13px;
+  }
+
+  .stats {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+    margin-bottom: 30px;
+  }
+
+  .stat {
+    padding: 20px;
+    text-align: center;
+    background: white;
+    border: 2px solid #e7e1fb;
+    border-radius: 22px;
+    box-shadow: 0 5px 16px #46339b0a;
+  }
+
+  .stat strong {
+    display: block;
+    margin-top: 5px;
+    font-size: 32px;
+    color: var(--purple-dark);
+  }
+
+  main > h2 {
+    margin: 28px 0 8px;
+    font-size: 25px;
+  }
+
+  #tasks {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+    margin: 18px 0 30px;
+  }
+
+  .task {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+    min-width: 0;
+    padding: 21px;
+    background: var(--card);
+    border: 2px solid #e6e1fa;
+    border-radius: 22px;
+    box-shadow: 0 5px 16px #46339b0a;
+  }
+.collection-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    width: 100px;
+    height: 76px;
+    box-sizing: border-box;
+    font-size: 28px;
+    border-radius: 18px;
+    background: #f0edff;
+}
+   .task-icon {
+   display: flex;
+   align-items: center;
+   justify-content: center;
+    width: 76px;
+    height: 76px;
+    font-size: 36px;
+    border-radius: 18px;
+    background: #f0edff;
+    box-sizing: border-box;
+  }
+
+  .task-info { width: 100%; }
+
+  .task-info h3 {
+    margin: 0 0 7px;
+    font-size: 19px;
+  }
+
+  .task-info p {
+    min-height: 18px;
+    margin: 0;
+    color: var(--muted);
+    font-size: 14px;
+  }
+
+  button {
+    min-height: 44px;
+    padding: 12px 16px;
+    border: 0;
+    border-radius: 13px;
+    background: var(--purple);
+    color: white;
+    font: inherit;
+    font-size: 14px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: transform .15s, background .15s;
+  }
+
+  button:hover:not(:disabled) {
+    transform: translateY(-2px);
+    background: var(--purple-dark);
+  }
+
+  button:focus-visible, select:focus-visible {
+    outline: 3px solid var(--gold);
+    outline-offset: 3px;
+  }
+
+  button:disabled {
+    opacity: .55;
+    cursor: default;
+  }
+
+  button.done {
+    background: #21865f;
+  }
+
+  button.secondary {
+    color: #4936a5;
+    background: #eae5ff;
+  }
+
+  .task button { width: 100%; }
+
+  .rewards {
+    padding: 24px;
+    margin-bottom: 22px;
+    border: 2px solid #f4d991;
+    border-radius: 24px;
+    background: linear-gradient(135deg, #fff8e3, #ffffff);
+  }
+
+  .rewards h2 { margin-top: 0; }
+
+  .reward { margin: 5px 5px 5px 0; }
+
+  #animalPicker {
+    margin-top: 14px;
+  }
+
+  #animalPicker label {
+    display: block;
+    margin-bottom: 6px;
+    font-size: 13px;
+    font-weight: bold;
+  }
+
+  #animalChoice {
+    width: 100%;
+    max-width: 260px;
+    padding: 10px;
+    border: 2px solid #e3dafa;
+    border-radius: 12px;
+    background: white;
+    color: var(--ink);
+    font: inherit;
+  }
+
+  @media (max-width: 650px) {
+    #tasks { grid-template-columns: 1fr; }
+
+    .pet {
+      gap: 14px;
+      padding: 18px;
+    }
+
+    .animal {
+      width: 86px;
+      height: 86px;
+      font-size: 54px;
+      border-radius: 24px;
+      margin-right: 14px;
+    }
+
+    .pet h2 { font-size: 22px; }
+    header h1 {
+  font-size: 28px;
+}
+  }
+</style>
+</head>
+
+<body>
+<header>
+  <h1>🌈 Delilah's Reward Chart</h1>
+  <p>Little steps, big rewards!</p>
+</header>
+
+<main>
+  <section class="pet">
+    <div class="animal" id="animal">🐣</div>
+    <div style="flex:1">
+      <h2 id="petName">Pip the Chick</h2>
+      <div id="level">Level 1 adventurer</div>
+<div class="progress"><div class="bar" id="xpBar"></div></div>
+<div id="xpText">0 / 30 XP to next level</div>
+
+<div id="animalPicker">
+  <label for="animalChoice">Choose your animal companion</label>
+  <select id="animalChoice" onchange="chooseAnimal(this.value)">
+    <option value="fox">🦊 Fox</option>
+    <option value="dragon">🐉 Dragon</option>
+    <option value="cat">🐱 Cat</option>
+    <option value="wolf">🐺 Wolf</option>
+    <option value="unicorn">🦄 Unicorn</option>
+  </select>
+    </div>
+    <div style="text-align: center; margin: 16px 0;">
+  <button onclick="finishWeek()">
+    🏆 Finish Week &amp; Start New Adventure
+  </button>
+</div>
+  </section>
+
+  <div class="stats">
+    <div class="stat">⭐ Points<strong id="points">0</strong></div>
+    <div class="stat">✅ Tasks done<strong id="completed">0/4</strong></div>
+  </div>
+
+  <div class="routine-switch">
+  <button onclick="changeRoutine('morning')">☀️ Morning</button>
+  <button onclick="changeRoutine('evening')">🌙 Evening</button>
+</div>
+
+<h2 id="routineTitle">☀️ My morning tasks</h2>
+<p class="note">Start a timer when you begin. Earn points when your task is done!</p>
+
+  <section id="tasks"></section>
+
+<section id="tasks"></section>
+
+<section class="rewards">
+  <h2>🎪 My Daily Reward</h2>
+  <div id="playtimeReward"></div>
+</section>
+
+<section class="rewards">
+  <h2>🎲 My Bedtime Reward</h2>
+  <div id="bedtimeReward"></div>
+</section>
+
+<section class="rewards">
+  <h2>🏆 My Weekly Achievements</h2>
+  <div id="weeklyAchievements"></div>
+</section>
+
+<section class="rewards">
+  <h2>📖 My Achievement Scrapbook</h2>
+  <div id="weeklyHistory"></div>
+</section>
+  <section class="rewards">
+    <h2>🎁 My reward shop</h2>
+    <p>Save your points for something fun.</p>
+    <div id="rewardList"></div>
+    <p class="note">Rewards are pretend tokens for now. A grown-up can provide the actual reward.</p>
+  </section>
+<section class="rewards">
+    <h2>🐾 My Animal Collection</h2>
+    <p>Discover your companions and see how far each one has grown!</p>
+    <div id="animalCollection"></div>
+</section>
+
+<section class="rewards">
+  <h2>🔒 Parent Controls</h2>
+  <p>For grown-ups only.</p>
+
+<button id="undoButton" class="secondary" onclick="undoLastAction()" disabled>
+    ↩️ Undo last completed task
+  </button>
+<button class="secondary" onclick="resetEverything()">
+  🔒 Reset Everything
+</button>
+</section>
+
+  <button class="secondary" onclick="resetDay()">Start a new day ↻</button>
+</main>
+
+<script>
+const morningTasks = [
+  
+{ name: "🌷 Have a kind, calm morning", icon: "🌷", minutes: 0, points: 10, noTimer: true },
+{ name: "Eat breakfast", icon: "🍽️", minutes: 15, points: 10 },
+{ name: "Brush my teeth", icon: "🪥", minutes: 2, points: 10, noTimer: true },
+  { name: "Get dressed", icon: "👕", minutes: 10, points: 10 },
+  { name: "Pack my school bag", icon: "🎒", minutes: 5, points: 10 }
+];
+const eveningTasks = [
+  { name: "Put toys away", icon: "🧸", minutes: 5, points: 10 },
+  { name: "Put pyjamas on", icon: "🌙", minutes: 5, points: 10 },
+{ name: "Brush my teeth", icon: "🪥", minutes: 2, points: 10, noTimer: true },
+{ name: "Happy bedtime", icon: "🌙", minutes: 10, points: 10, noTimer: true },
+];
+const rewardData = [
+  { name: "🥐 Special trip to the bakery", cost: 150, weekendOnly: true },
+  { name: "💷 £5 pocket money", cost: 300, weekendOnly: true },
+  { name: "🍿 Family movie night", cost: 400, weekendOnly: true }
+];
+let currentRoutine = "morning";
+function freshState() {
+  return {
+    points: 0,
+    xp: 0,
+    completed: [],
+    eveningCompleted: [],
+    weeklyTasks: 0,
+    weeklyDays: {},
+    weeklyStart: getWeekStart(),
+    weeklyHistory: [],
+    photoTimeConfirmed: false,
+    weeklyCelebrated: {
+  busyBee: false,
+  superstar: false
+},
+timers: {},
+eveningTimers: {},
+redeemed: [],
+    animalXP: {
+  fox: 0,
+  dragon: 0,
+  cat: 0,
+  wolf: 0,
+  unicorn: 0
+},
+animalCollection: {
+  fox: 0,
+  dragon: 0,
+  cat: 0,
+  wolf: 0,
+  unicorn: 0
+},
+   animalChoice: "fox"
+  };
+}
+let state;
+try {
+  state = JSON.parse(localStorage.getItem("familyRoutineDemo"))
+    || freshState();
+} catch (error) {
+  state = freshState();
+}
+if (!state.animalChoice) {
+  state.animalChoice = "fox";
+}
+if (!state.eveningCompleted) {
+  state.eveningCompleted = [];
+}
+if (state.weeklyTasks == null) {
+  state.weeklyTasks = 0;
+}
+if (!state.weeklyDays) {
+  state.weeklyDays = {};
+}
+if (!state.weeklyHistory) {
+  state.weeklyHistory = [];
+}
+if (!state.weeklyCelebrated) {
+  state.weeklyCelebrated = {
+    busyBee: false,
+    superstar: false
+  };
+}
+if (state.photoTimeConfirmed == null) {
+  state.photoTimeConfirmed = false;
+}
+
+if (!state.weeklyStart) {
+  state.weeklyStart = getWeekStart();
+}
+
+if (state.weeklyStart !== getWeekStart()) {
+  if (state.weeklyTasks > 0) {
+    const qualifyingDays = objectValues(state.weeklyDays)
+      .filter(count => count >= 3).length;
+
+    state.weeklyHistory.push({
+      weekStart: state.weeklyStart,
+      weeklyTasks: state.weeklyTasks,
+      qualifyingDays: qualifyingDays,
+      busyBee: state.weeklyTasks >= 25,
+      superstar: qualifyingDays >= 5
+    });
+  }
+
+  state.weeklyTasks = 0;
+  state.weeklyDays = {};
+  state.weeklyCelebrated = {
+  busyBee: false,
+  superstar: false
+};
+  state.weeklyStart = getWeekStart();
+}
+if (!state.eveningTimers) {
+  state.eveningTimers = {};
+}
+if (!state.animalCollection) {
+  state.animalCollection = {
+    fox: 0,
+    dragon: 0,
+    cat: 0,
+    wolf: 0,
+    unicorn: 0
+  };
+}
+if (!state.animalXP) {
+  state.animalXP = {
+    fox: 0,
+    dragon: 0,
+    cat: 0,
+    wolf: 0,
+    unicorn: 0
+  };
+}
+const activeIntervals = {
+  morning: {},
+  evening: {}
+};
+
+function save() {
+  localStorage.setItem("familyRoutineDemo", JSON.stringify(state));
+}
+// Compatibility helper for older browsers
+function objectValues(obj) {
+  return Object.keys(obj).map(function(key) {
+    return obj[key];
+  });
+}
+// Compatibility helper for older Safari
+function padNumber(number) {
+  return number < 10 ? "0" + number : String(number);
+}
+const animalOptions = {
+  fox: { emoji: "🦊", name: "Foxy" },
+  dragon: { emoji: "🐉", name: "Ember" },
+  cat: { emoji: "🐱", name: "Whiskers" },
+  wolf: { emoji: "🐺", name: "Luna" },
+  unicorn: { emoji: "🦄", name: "Sparkles" }
+};
+
+
+function animalForLevel(level, animalName) {
+  const animal =
+  animalOptions[animalName || state.animalChoice] || animalOptions.fox;
+
+  let title = "Little Explorer";
+  let decoration = "";
+
+  if (level >= 2) {
+    title = "Brave Adventurer";
+    decoration = "✨";
+  }
+
+  if (level >= 3) {
+    title = "Quest Hero";
+    decoration = "⭐";
+  }
+
+  if (level >= 4) {
+    title = "Master Adventurer";
+    decoration = "👑";
+  }
+
+  if (level >= 5) {
+    title = "Legendary Champion";
+    decoration = "👑✨";
+  }
+
+return [
+  animal.emoji,
+  animal.name + " — " + title,
+  decoration
+];
+}
+
+
+function chooseAnimal(choice) {
+  if (!animalOptions[choice]) return;
+
+  state.animalChoice = choice;
+  save();
+  render();
+}
+
+function finishWeek() {
+  const animal = state.animalChoice || "fox";
+  const currentXP = state.animalXP[animal] || 0;
+
+  if (currentXP === 0) {
+    alert("Complete a task with this animal before finishing the week!");
+    return;
+  }
+
+  const currentLevel = Math.min(
+    5,
+    Math.floor(currentXP / 30) + 1
+  );
+
+  state.animalCollection[animal] = Math.max(
+    state.animalCollection[animal] || 0,
+    currentLevel
+  );
+
+  state.animalXP[animal] = 0;
+
+  const nextAnimal = Object.keys(animalOptions).find(
+    name => (state.animalCollection[name] || 0) < 5
+  );
+
+  if (nextAnimal) {
+    state.animalChoice = nextAnimal;
+  }
+
+  save();
+  render();
+
+  if (nextAnimal) {
+    alert("New adventure started! Your next companion is " +
+      animalOptions[nextAnimal].name + "!");
+  } else {
+    alert("Amazing! You have collected all five animals!");
+  }
+}
+
+function changeRoutine(routine) {
+  currentRoutine = routine;
+
+  document.getElementById("routineTitle").textContent =
+    routine === "morning" ? "☀️ My morning tasks" : "🌙 My evening tasks";
+
+  render();
+}
+function render() {
+const animal = state.animalChoice || "fox";
+const currentXP = state.animalXP[animal] || 0;
+const level = Math.min(5, Math.floor(currentXP / 30) + 1);
+const xpInLevel = level === 5 ? 30 : currentXP % 30;
+  const pet = animalForLevel(level);
+const activeTasks = currentRoutine === "morning" ? morningTasks : eveningTasks;
+const completedTasks = currentRoutine === "morning" ? state.completed : state.eveningCompleted;
+const timers = currentRoutine === "morning" ? state.timers : state.eveningTimers;
+const routineIntervals = activeIntervals[currentRoutine];
+const qualifyingDays = objectValues(state.weeklyDays)
+  .filter(count => count >= 3).length;
+const busyBeeComplete = state.weeklyTasks >= 25;
+const superstarComplete = qualifyingDays >= 5;
+
+const playtimeEarned =
+  state.completed.length === morningTasks.length;
+
+const bedtimeEarned =
+  state.eveningCompleted.length === eveningTasks.length;
+  document.getElementById("animal").textContent = pet[0];
+  document.getElementById("petName").textContent = pet[1];
+  document.getElementById("animalChoice").value = 
+  state.animalChoice || "fox";
+  document.getElementById("level").textContent =
+    "Level " + level + " adventurer";
+document.getElementById("xpText").textContent =
+  level >= 5
+    ? "Maximum level reached!"
+    : xpInLevel + " / 30 XP to next level";
+  document.getElementById("xpBar").style.width =
+    (xpInLevel / 30 * 100) + "%";
+  document.getElementById("points").textContent = state.points;
+  const undoButton = document.getElementById("undoButton");
+if (undoButton) {
+  undoButton.disabled = !state.undoState;
+}
+
+  document.getElementById("weeklyAchievements").innerHTML = `
+  <div class="task">
+    <div class="task-icon">🐝</div>
+    <div class="task-info">
+      <h3>Busy Bee ${busyBeeComplete ? "🏆" : ""}</h3>
+      <p>${Math.min(state.weeklyTasks, 25)} / 25 tasks completed</p>
+    </div>
+  </div>
+
+  <div class="task">
+    <div class="task-icon">⭐</div>
+    <div class="task-info">
+      <h3>Superstar ${superstarComplete ? "🏆" : ""}</h3>
+      <p>${Math.min(qualifyingDays, 5)} / 5 days with 3 or more tasks</p>
+    </div>
+  </div>
+`;
+document.getElementById("weeklyHistory").innerHTML =
+  state.weeklyHistory.length === 0
+    ? "<p>Your adventure scrapbook is waiting for its first week! 🌟</p>"
+    : state.weeklyHistory.map(week => `
+        <div class="task">
+          <div class="task-icon">📖</div>
+          <div class="task-info">
+            <h3>Week starting ${week.weekStart}</h3>
+            <p>${week.weeklyTasks} tasks completed</p>
+            <p>${week.busyBee ? "🐝 Busy Bee earned!" : "🐝 Busy Bee not yet earned"}</p>
+            <p>${week.superstar ? "⭐ Superstar earned!" : "⭐ Superstar not yet earned"}</p>
+          </div>
+        </div>
+      `).join("");
+  document.getElementById("completed").textContent =
+  completedTasks.length + "/" + activeTasks.length;
+
+document.getElementById("playtimeReward").innerHTML =
+  playtimeEarned
+    ? `
+      <div class="task">
+        <div class="task-icon">💷</div>
+        <div class="task-info">
+          <h3>You've earned £1 pocket money!</h3>
+          <p>Fantastic work completing all five morning tasks! 🌟</p>
+        </div>
+      </div>
+    `
+    : `
+      <div class="task">
+        <div class="task-icon">💷</div>
+        <div class="task-info">
+          <h3>£1 pocket money</h3>
+          <p>${state.completed.length} / 5 morning tasks completed</p>
+        </div>
+      </div>
+    `;
+document.getElementById("bedtimeReward").innerHTML =
+  bedtimeEarned
+    ? `
+      <div class="task">
+        <div class="task-icon">🎲</div>
+        <div class="task-info">
+          <h3>You've earned 10 minutes of Cards / Board Game!</h3>
+          <p>Fantastic work completing all three evening tasks! 🌙</p>
+        </div>
+      </div>
+    `
+    : `
+      <div class="task">
+        <div class="task-icon">🎲</div>
+        <div class="task-info">
+          <h3>10 minutes of Cards / Board Game</h3>
+          <p>${state.eveningCompleted.length} / 4 evening tasks completed</p>
+        </div>
+      </div>
+    `;
+document.getElementById("tasks").innerHTML = activeTasks.map((task, i) => {
+const done = completedTasks.includes(i);
+const remaining = timers[i];
+const timerText = task.name === "Happy bedtime"
+  ? "Ask a grown-up to tick this off ⭐"
+  : task.noTimer
+    ? "Press Done when finished!"
+    : remaining == null
+      ? task.minutes + " minute timer"
+      : remaining > 0
+        ? formatTime(remaining) + " remaining"
+        : "Timer finished!";
+
+    return `
+      <div class="task">
+        <div class="task-icon">${task.icon}</div>
+        <div class="task-info">
+          <h3>${task.name} ${done ? "✅" : ""}</h3>
+          <p>${done ? "Brilliant work! +" + task.points + " points" : timerText}</p>
+        </div>
+        ${activeTasks[i].noTimer ? "" : `
+  <button class="secondary"
+    ${done || routineIntervals[i] ? "disabled" : ""}
+    onclick="startTimer(${i})">
+    ${routineIntervals[i] ? "Timer running" : "Start timer"}
+  </button>
+`}
+        <button class="${done ? "done" : ""}"
+          ${done ? "disabled" : ""}
+          onclick="completeTask(${i})">
+          ${done ? "Completed" : "I'm done!"}
+        </button>
+      </div>`;
+  }).join("");
+
+const day = new Date().getDay();
+const isWeekend = day === 0 || day === 6;
+
+document.getElementById("rewardList").innerHTML = rewardData.map((r, i) => {
+  const weekendLocked = r.weekendOnly && !isWeekend;
+  const notEnoughPoints = state.points < r.cost;
+
+  return `
+    <button class="reward"
+      ${weekendLocked || notEnoughPoints ? "disabled" : ""}
+      onclick="redeemReward(${i})">
+      ${r.name} — ${r.cost} ⭐
+      ${weekendLocked ? "<br>Available at the weekend!" : ""}
+    </button>
+  `;
+}).join("");
+   document.getElementById("animalCollection").innerHTML =
+    Object.keys(animalOptions).map(name => {
+      const bestLevel = state.animalCollection[name] || 0;
+      const animal = animalOptions[name];
+      const pet = animalForLevel(bestLevel, name);
+      const collected = bestLevel >= 5;
+
+      return `
+        <div class="task">
+          <div class="collection-icon">
+  <span>${pet[0]}</span><span>${pet[2]}</span>
+</div>
+          <div class="task-info">
+            <h3>${animal.name}</h3>
+            
+<p>${collected
+  ? "🏆 Fully collected!"
+  : bestLevel === 0
+    ? "Ready for an adventure!"
+    : "Level " + bestLevel + " of 5"}
+</p>
+<div style="background: #e5e7eb; border-radius: 10px; height: 14px; overflow: hidden; margin-top: 8px;">
+  <div style="background: #22c55e; height: 14px; width: ${bestLevel * 20}%; border-radius: 10px;"></div>
+</div>
+
+          </div>
+        </div>
+      `;
+    }).join(""); 
+}
+
+function formatTime(seconds) {
+  const m = Math.floor(seconds / 60);
+  const s = seconds % 60;
+return m + ":" + padNumber(s);
+}
+
+function startTimer(i) {
+  const completedTasks =
+    currentRoutine === "morning"
+      ? state.completed
+      : state.eveningCompleted;
+
+  const timers =
+    currentRoutine === "morning"
+      ? state.timers
+      : state.eveningTimers;
+
+  const activeTasks =
+    currentRoutine === "morning"
+      ? morningTasks
+      : eveningTasks;
+
+  const routineIntervals = activeIntervals[currentRoutine];
+
+if (completedTasks.includes(i) || routineIntervals[i]) return;
+
+  timers[i] = activeTasks[i].minutes * 60;
+  save();
+  render();
+
+  routineIntervals[i] = setInterval(() => {
+    timers[i] = Math.max(0, timers[i] - 1);
+    save();
+    render();
+
+    if (timers[i] <= 0) {
+      clearInterval(routineIntervals[i]);
+     delete routineIntervals[i];
+      render();
+    }
+  }, 1000);
+}
+
+function getWeekStart() {
+  const today = new Date();
+  const day = today.getDay();
+  const difference = day === 0 ? 6 : day - 1;
+
+  today.setDate(today.getDate() - difference);
+  today.setHours(0, 0, 0, 0);
+
+return today.getFullYear() + "-" +
+  padNumber(today.getMonth() + 1) + "-" +
+  padNumber(today.getDate());
+}
+function completeTask(i) {
+  const completedTasks =
+    currentRoutine === "morning"
+      ? state.completed
+      : state.eveningCompleted;
+
+  const activeTasks =
+    currentRoutine === "morning"
+      ? morningTasks
+      : eveningTasks;
+
+  if (completedTasks.includes(i)) return;
+
+ const routineIntervals = activeIntervals[currentRoutine];
+
+if (routineIntervals[i]) {
+  clearInterval(routineIntervals[i]);
+  delete routineIntervals[i];
+}
+
+// Save a snapshot so the last task can be undone
+const previousState = JSON.parse(JSON.stringify(state));
+delete previousState.undoState;
+state.undoState = previousState;
+
+  completedTasks.push(i);
+  state.weeklyTasks = (state.weeklyTasks || 0) + 1;
+  if (state.weeklyTasks >= 25 && !state.weeklyCelebrated.busyBee) {
+  state.weeklyCelebrated.busyBee = true;
+  alert("🐝 AMAZING! Delilah is a BUSY BEE! 🏆");
+}
+  state.points += activeTasks[i].points;
+const today = new Date().getFullYear() + "-" +
+  String(new Date().getMonth() + 1).padStart(2, "0") + "-" +
+  String(new Date().getDate()).padStart(2, "0");
+
+state.weeklyDays[today] =
+  (state.weeklyDays[today] || 0) + 1;
+  if (state.weeklyDays[today] >= 3) {
+  state.weeklyDays[today] = 3;
+}
+const qualifyingDays = objectValues(state.weeklyDays)
+  .filter(count => count >= 3).length;
+
+if (qualifyingDays >= 5 && !state.weeklyCelebrated.superstar) {
+  state.weeklyCelebrated.superstar = true;
+  alert("⭐ WOW! Delilah is a SUPERSTAR! 🏆");
+}
+
+  const animal = state.animalChoice || "fox";
+  state.animalXP[animal] =
+    (state.animalXP[animal] || 0) + activeTasks[i].points;
+
+  const animalLevel = Math.min(
+    5,
+    Math.floor(state.animalXP[animal] / 30) + 1
+  );
+
+  state.animalCollection[animal] = Math.max(
+    state.animalCollection[animal] || 0,
+    animalLevel
+  );
+
+  save();
+  render();
+}
+
+function undoLastAction() {
+  if (!state.undoState) {
+    alert("There is nothing to undo yet.");
+    return;
+  }
+
+  if (!confirm("Undo the last completed task?")) return;
+
+  // Stop any timers currently running
+  ["morning", "evening"].forEach(routine => {
+    objectValues(activeIntervals[routine]).forEach(interval => {
+      clearInterval(interval);
+    });
+    activeIntervals[routine] = {};
+  });
+
+  // Restore the previous progress
+  state = state.undoState;
+
+  save();
+  render();
+
+  alert("↩️ Last task completion undone!");
+}
+function resetEverything() {
+  const password = prompt("Parent password required:");
+
+  if (password !== "2021") {
+    if (password !== null) {
+      alert("Incorrect password. Nothing has been reset.");
+    }
+    return;
+  }
+
+  const confirmed = confirm(
+    "⚠️ RESET DELILAH'S CHART COMPLETELY?\n\n" +
+    "This will permanently erase:\n\n" +
+    "• All points\n" +
+    "• All completed morning and evening tasks\n" +
+    "• All animal XP and collection progress\n" +
+    "• All weekly achievements and progress\n" +
+    "• The entire achievement scrapbook\n" +
+    "• All redeemed rewards\n\n" +
+    "The chart will start completely fresh.\n\n" +
+    "This cannot be undone. Are you absolutely sure?"
+  );
+
+  if (!confirmed) return;
+
+  ["morning", "evening"].forEach(routine => {
+    objectValues(activeIntervals[routine]).forEach(interval => {
+      clearInterval(interval);
+    });
+    activeIntervals[routine] = {};
+  });
+
+  state = freshState();
+
+  save();
+  render();
+
+  alert("🌟 Delilah's chart has been reset!");
+}
+
+function redeemReward(i) {
+  const reward = rewardData[i];
+  if (state.points < reward.cost) return;
+const day = new Date().getDay();
+const isWeekend = day === 0 || day === 6;
+
+if (reward.weekendOnly && !isWeekend) {
+  alert("This reward is available at the weekend! 🌟");
+  return;
+}
+  if (!confirm("Redeem " + reward.name + " for " + reward.cost + " points?")) {
+    return;
+  }
+
+  state.points -= reward.cost;
+  state.redeemed.push({
+    name: reward.name,
+    date: new Date().toLocaleDateString()
+  });
+
+  save();
+  render();
+  alert("Reward token earned! Ask a grown-up to approve your reward.");
+}
+
+function resetDay() {
+  if (!confirm("Start a new day? Today's task progress will reset.")) return;
+
+  objectValues(activeIntervals).forEach(routine => {
+    objectValues(routine).forEach(interval => clearInterval(interval));
+    Object.keys(routine).forEach(i => delete routine[i]);
+  });
+
+  state.completed = [];
+  state.eveningCompleted = [];
+  state.photoTimeConfirmed = false;
+  state.timers = {};
+  state.eveningTimers = {};
+  state.redeemed = [];
+
+  save();
+  render();
+}
+
+render();
+</script>
+</body>
+</html>
